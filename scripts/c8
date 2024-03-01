@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# setup
+
+COMMAND=$1
+CONFIG=$2
+
+log() {
+  printf "\n\n>>> $1\n"
+}
+
+case $COMMAND in
+install)
+  log "Installing C8"
+  ./c8-install.sh $CAMUNDA_LOCAL $CONFIG
+  ;;
+apply-changes)
+  log "Applying changes"
+  ./c8-apply-changes.sh $CAMUNDA_LOCAL $CONFIG
+  ;;
+cleanup)
+  log "Cleaning up C8"
+  ./c8-cleanup.sh $CAMUNDA_LOCAL $CONFIG
+  ;;
+*)
+  log "Unknown command"
+  ;;
+esac

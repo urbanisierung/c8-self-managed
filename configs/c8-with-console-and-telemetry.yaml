@@ -21,10 +21,13 @@ global:
 
 # console
 console:
-  customerId: urbanisierung-in-da-house
-  installationId: lenovo-diypunk
-  telemetry:
-    enabled: true
+  configuration: |
+    camunda:
+      console:
+        customerId: urbanisierung-in-da-house
+        installationId: lenovo-diypunk
+        telemetry:
+          enabled: true
   enabled: true
   contextPath: "/"
   image:

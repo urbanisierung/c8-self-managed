@@ -2,7 +2,8 @@
 
 # setup
 
-CONFIG=$1
+CAMUNDA_LOCAL=$1
+CONFIG=$2
 
 log() {
   printf "\n\n>>> $1\n"
@@ -10,20 +11,20 @@ log() {
 
 # unreleased helm charts
 log "Use unreleased helm charts"
-make camunda.unreleased
+make camunda.unreleased -C $CAMUNDA_LOCAL
 
 # create cluster
 log "Create cluster"
-kind create cluster --config clusters/kind/kind-cluster-config.yaml --name camunda-platform-local
+kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name camunda-platform-local
 kubectl ctx kind-camunda-platform-local
 
 # create infra
 log "Create infra"
-kubectl kustomize --enable-helm modules/ingress-nginx | kubectl apply -f -
+kubectl kustomize --enable-helm $CAMUNDA_LOCAL/modules/ingress-nginx | kubectl apply -f -
 kubectl create namespace camunda-platform
 kubectl ns camunda-platform
-kubectl apply -n camunda-platform -f modules/camunda-platform/secret.yaml
-make secret.webmodeler.create
+kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
+make secret.webmodeler.create -C $CAMUNDA_LOCAL
 
 # install c8
 # kubectl kustomize --enable-helm deployments/camunda-platform | kubectl apply -n camunda-platform -f -

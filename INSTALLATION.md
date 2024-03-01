@@ -87,3 +87,16 @@ make clean
 helm uninstall camunda-platform -n camunda-platform
 kubectl delete pvc -l app.kubernetes.io/instance=camunda-platform -n camunda-platform
 ```
+
+## useful commands
+
+```bash
+# edit console deployment
+k edit deployments.apps camunda-platform-console
+
+# update envvars
+kubectl set env deployment/camunda-platform-console CAMUNDA_CONSOLE_CUSTOMERID=urbanisierung-in-da-house CAMUNDA_CONSOLE_INSTALLATIONID=lenovo-diypunk CAMUNDA_CONSOLE_TELEMETRY_ENABLED="true"
+
+# list all envvars
+kubectl set env deployment/camunda-platform-console --list
+```

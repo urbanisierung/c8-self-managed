@@ -3,18 +3,31 @@
 # setup
 
 COMMAND=$1
-CONFIG=$2
+CONSOLE=$2
 
 log() {
   printf "\n\n>>> $1\n"
 }
+
+case $CONSOLE in
+*plain*)
+  CONFIG=../configs/c8-with-console.yaml
+  ;;
+*telemetry*)
+  CONFIG=../configs/c8-with-console-and-telemetry.yaml
+  ;;
+*)
+  log "Unknown config"
+  exit 1
+  ;;
+esac
 
 case $COMMAND in
 install)
   log "Installing C8"
   ./c8-install.sh $CAMUNDA_LOCAL $CONFIG
   ;;
-apply-changes)
+apply)
   log "Applying changes"
   ./c8-apply-changes.sh $CAMUNDA_LOCAL $CONFIG
   ;;

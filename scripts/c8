@@ -13,6 +13,9 @@ case $CONSOLE in
 *plain*)
   CONFIG=../configs/c8-with-console.yaml
   ;;
+*context*)
+  CONFIG=../configs/c8-with-console-context-path.yaml
+  ;;
 *telemetry*)
   CONFIG=../configs/c8-with-console-and-telemetry.yaml
   ;;

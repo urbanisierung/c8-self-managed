@@ -1,0 +1,79 @@
+global:
+  identity:
+    auth:
+      enabled: true
+      publicIssuerUrl: "https://local.distro.ultrawombat.com/auth/realms/camunda-platform"
+      operate:
+        redirectUrl: "https://local.distro.ultrawombat.com/operate"
+      tasklist:
+        redirectUrl: "https://local.distro.ultrawombat.com/tasklist"
+      optimize:
+        redirectUrl: "https://local.distro.ultrawombat.com/optimize"
+      console:
+        redirectUrl: "https://local.distro.ultrawombat.com/console"
+  ingress:
+    enabled: true
+    className: ""
+    host: "local.distro.ultrawombat.com"
+    tls:
+      enabled: true
+      secretName: camunda-platform
+
+# console
+console:
+  enabled: true
+  contextPath: "/console"
+  image:
+    tag: SNAPSHOT
+    pullSecrets:
+      - name: registry-camunda-cloud
+
+connectors:
+  enabled: true
+  inbound:
+    mode: disabled
+
+# Configure elastic search to make it running for local development
+elasticsearch:
+  # Request a single node with a persistent volume
+  master:
+    replicaCount: 1
+    persistence:
+      size: 15Gi
+
+identity:
+  enabled: true
+  contextPath: "/identity"
+  fullURL: "https://local.distro.ultrawombat.com/identity"
+  image:
+    tag: SNAPSHOT
+
+operate:
+  enabled: true
+  contextPath: "/operate"
+
+optimize:
+  enabled: true
+  contextPath: "/optimize"
+
+tasklist:
+  enabled: true
+  contextPath: "/tasklist"
+
+# Reduce for Zeebe and Gateway the configured replicas and with that the required resources
+# to get it running locally
+zeebe:
+  clusterSize: 1
+  partitionCount: 1
+  replicationFactor: 1
+  pvcSize: 10Gi
+
+zeebe-gateway:
+  replicas: 1
+  ingress:
+    enabled: true
+    className: ""
+    host: "zeebe.local.distro.ultrawombat.com"
+    tls:
+      enabled: true
+      secretName: camunda-platform

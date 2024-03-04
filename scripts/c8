@@ -17,8 +17,7 @@ case $CONSOLE in
   CONFIG=../configs/c8-with-console-and-telemetry.yaml
   ;;
 *)
-  log "Unknown config"
-  exit 1
+  CONFIG=../configs/c8-with-console.yaml
   ;;
 esac
 
@@ -34,6 +33,10 @@ apply)
 cleanup)
   log "Cleaning up C8"
   ./c8-cleanup.sh $CAMUNDA_LOCAL $CONFIG
+  ;;
+docs)
+  log "Opening C8 documentation"
+  http-server $CAMUNDA_DOCS -p 8080
   ;;
 *)
   log "Unknown command"

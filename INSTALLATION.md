@@ -99,4 +99,10 @@ kubectl set env deployment/camunda-platform-console CAMUNDA_CONSOLE_CUSTOMERID=u
 
 # list all envvars
 kubectl set env deployment/camunda-platform-console --list
+
+# follow console logs
+k logs -f --tail=10 deployments/camunda-platform-console
+
+# prettyfied logs
+k logs -f --tail=10 deployments/camunda-platform-console | jq -r '[.level, .timestamp, .message] | join(" | ")'
 ```

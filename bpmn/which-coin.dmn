@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_1hedwf5" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Web Modeler" exporterVersion="2bf3eb8" camunda:diagramRelationId="876b83d1-9e3b-461e-96e8-fd90b712f6c7" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.4.0">
+  <decision id="Decision_1h4cn4h" name="which coin?">
+    <informationRequirement id="InformationRequirement_1siwghy">
+      <requiredInput href="#InputData_0yec9eg" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_0f51ia8">
+      <requiredInput href="#InputData_0tkdycb" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_0p6knze">
+      <input id="Input_1">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>coin</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_02gxdkn">
+          <text>"eth","btc"</text>
+        </inputValues>
+      </input>
+      <input id="InputClause_1vhb3r5">
+        <inputExpression id="LiteralExpression_10ck0za" typeRef="string">
+          <text>rage</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_0ihf29m">
+          <text>"ok","high","low"</text>
+        </inputValues>
+      </input>
+      <output id="Output_1" name="coinChoice" typeRef="string" />
+      <rule id="DecisionRule_04rc2nl">
+        <inputEntry id="UnaryTests_0iex150">
+          <text>"eth"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0tsdp8h">
+          <text>"ok"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0gmaupu">
+          <text>"eth"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0i9uo36">
+        <inputEntry id="UnaryTests_009ox1g">
+          <text>"eth"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_111xwhq">
+          <text>"high"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zsb133">
+          <text>"eth"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1k9yk7w">
+        <inputEntry id="UnaryTests_1vnjwvf">
+          <text>"eth"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_15ldpoi">
+          <text>"low"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zfjfoo">
+          <text>"eth"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1i500lj">
+        <inputEntry id="UnaryTests_07dc9gm">
+          <text>"btc"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0n9zj9m">
+          <text>"ok"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_120nja7">
+          <text>"eth"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_16870og">
+        <inputEntry id="UnaryTests_1221mrs">
+          <text>"btc"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_059oaeu">
+          <text>"high"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1fsqspx">
+          <text>"eth"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0djdmq4">
+        <inputEntry id="UnaryTests_0ygwq9h">
+          <text>"btc"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1f61y9w">
+          <text>"low"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0spd8eq">
+          <text>"eth"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_0yec9eg" name="coin" />
+  <inputData id="InputData_0tkdycb" name="rage" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_1h4cn4h">
+        <dc:Bounds height="80" width="180" x="250" y="100" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_01yooep" dmnElementRef="InputData_0yec9eg">
+        <dc:Bounds height="45" width="125" x="158" y="288" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0zmrgxw" dmnElementRef="InputData_0tkdycb">
+        <dc:Bounds height="45" width="125" x="388" y="289" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0pmtgxj" dmnElementRef="InformationRequirement_1siwghy">
+        <di:waypoint x="221" y="288" />
+        <di:waypoint x="310" y="200" />
+        <di:waypoint x="310" y="180" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_1g3s1fc" dmnElementRef="InformationRequirement_0f51ia8">
+        <di:waypoint x="451" y="289" />
+        <di:waypoint x="370" y="200" />
+        <di:waypoint x="370" y="180" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

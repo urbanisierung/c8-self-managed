@@ -1,0 +1,1 @@
+{"executionPlatform":"Camunda Cloud","executionPlatformVersion":"8.4.0","exporter":{"name":"Camunda Web Modeler","version":"b5cb583"},"schemaVersion":15,"id":"Form_1a69yfi","components":[{"label":"Text field","type":"textfield","layout":{"row":"Row_05s0k3c","columns":null},"id":"Field_1wwz5y9","key":"textfield_aikg69"}],"type":"default"}

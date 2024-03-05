@@ -24,7 +24,7 @@ console:
   enabled: true
   contextPath: "/"
   image:
-    tag: 8.4.42
+    tag: 8.4.44
     pullSecrets:
       - name: registry-camunda-cloud
 

@@ -15,6 +15,28 @@
 # enable telemetry
 kubectl set env deployment/camunda-platform-console CAMUNDA_CONSOLE_CUSTOMERID=urbanisierung-in-da-house CAMUNDA_CONSOLE_INSTALLATIONID=lenovo-diypunk CAMUNDA_CONSOLE_TELEMETRY_ENABLED="true"
 
+# generate process instances
+# use credentials for zeebe app in identity
+zbctl status
+zbctl deploy ./bpmn/example.bpmn
+zbctl create instance camunda-cloud-quick-start-advanced
+zbctl create worker test-worker --handler "echo {\"result\":\"Pong\"}"
+
+# task users
+zbctl deploy ./bpmn/example-form.form
+zbctl deploy ./bpmn/human-task.bpmn
+zbctl create instance human-task
+
+# process instances
+zbctl deploy ./bpmn/start-every-30s.bpmn
+zbctl create instance start-every-30s
+
+# decision instances
+zbctl deploy ./bpmn/which-coin.dmn
+zbctl deploy ./bpmn/which-coin.bpmn
+zbctl create instance which-coin
+zbctl create instance which-coin --variables "{\"coin\": \"btc\", \"rage\": \"high\"}"
+
 # check logs
 k logs -f --tail=10 deployments/camunda-platform-console | jq -r '[.level, .timestamp, .message] | join(" | ")'
 

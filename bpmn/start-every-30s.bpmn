@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:modeler="http://camunda.org/schema/modeler/1.0"
+  xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1"
+  targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler"
+  exporterVersion="b5cb583" modeler:executionPlatform="Camunda Cloud"
+  modeler:executionPlatformVersion="8.4.0"
+  camunda:diagramRelationId="ba669ee0-9cbf-42bb-99e9-cc3f81aa4832">
+  <bpmn:process id="start-every-30s" name="start-every-30s" isExecutable="true">
+    <bpmn:intermediateThrowEvent id="Event_1qtexja">
+      <bpmn:incoming>Flow_0xe4wvq</bpmn:incoming>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0xe4wvq" sourceRef="StartEvent_1" targetRef="Event_1qtexja" />
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0xe4wvq</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0flfy91">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R/PT30s</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="start-every-30s">
+      <bpmndi:BPMNShape id="Event_1qtexja_di" bpmnElement="Event_1qtexja">
+        <dc:Bounds x="242" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wh6wtp_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="150" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0xe4wvq_di" bpmnElement="Flow_0xe4wvq">
+        <di:waypoint x="186" y="118" />
+        <di:waypoint x="242" y="118" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

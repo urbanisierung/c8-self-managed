@@ -10,8 +10,11 @@ log() {
 }
 
 case $CONSOLE in
-*plain*)
+*snapshot*)
   CONFIG=../configs/c8-with-console.yaml
+  ;;
+*stable*)
+  CONFIG=../configs/c8-with-console-stable.yaml
   ;;
 *context*)
   CONFIG=../configs/c8-with-console-context-path.yaml

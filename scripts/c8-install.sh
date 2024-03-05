@@ -36,3 +36,5 @@ helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-
 log "Wait for C8"
 kubectl get pods
 kubectl get ingress
+
+watch kubectl get pods

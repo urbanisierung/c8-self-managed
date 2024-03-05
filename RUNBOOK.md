@@ -1,5 +1,27 @@
 # runbook
 
+## prerequisites
+
+```bash
+# checkout camunda-platform-local
+git clone git@github.com:camunda/camunda-platform-local.git
+
+# optional: checkout docs PR with instructions
+git clone git@github.com:camunda/camunda-docs.git
+gco console-sm
+npm i && npm run build
+
+# configure base envvars
+# okta username
+export TEST_DOCKER_USERNAME_CAMUNDA_CLOUD='harbor-username'
+# okta password
+export TEST_DOCKER_PASSWORD_CAMUNDA_CLOUD='harbor-password'
+export CAMUNDA_LOCAL='path-to-camunda-platform-local'
+export CAMUNDA_DOCS='path-to-camunda-platform-docs'
+```
+
+## set up C8
+
 ```bash
 # install SNAPSHOT
 # ./scripts

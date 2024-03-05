@@ -6,72 +6,73 @@ COMMAND=$1
 CONSOLE=$2
 
 log() {
-	printf "\n\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n🍿 >>> $1\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n"
+  printf "\n\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n🍿 >>> $1\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n"
 }
 
 case $CONSOLE in
 *snapshot*)
-	CONFIG=../configs/c8-with-console.yaml
-	;;
+  CONFIG=../configs/c8-with-console.yaml
+  ;;
 *stable*)
-	CONFIG=../configs/c8-with-console-stable.yaml
-	;;
+  CONFIG=../configs/c8-with-console-stable.yaml
+  ;;
 *context*)
-	CONFIG=../configs/c8-with-console-context-path.yaml
-	;;
+  CONFIG=../configs/c8-with-console-context-path.yaml
+  ;;
 *telemetry*)
-	CONFIG=../configs/c8-with-console-and-telemetry.yaml
-	;;
+  CONFIG=../configs/c8-with-console-and-telemetry.yaml
+  ;;
 *)
-	CONFIG=../configs/c8-with-console.yaml
-	;;
+  CONFIG=../configs/c8-with-console.yaml
+  ;;
 esac
 
 case $COMMAND in
 install)
-	log "Installing C8"
-	# unreleased helm charts
-	log "Use unreleased helm charts"
-	make camunda.unreleased -C $CAMUNDA_LOCAL
+  # see https://employee-academy.camunda.com/c8-self-managed-using-c8-helm-chart
+  log "Installing C8"
+  # unreleased helm charts
+  log "Use unreleased helm charts"
+  make camunda.unreleased -C $CAMUNDA_LOCAL
 
-	# create cluster
-	log "Create cluster"
-	kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name camunda-platform-local
-	kubectl ctx kind-camunda-platform-local
+  # create cluster
+  log "Create cluster"
+  kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name camunda-platform-local
+  kubectl ctx kind-camunda-platform-local
 
-	# create infra
-	log "Create infra"
-	kubectl kustomize --enable-helm $CAMUNDA_LOCAL/modules/ingress-nginx | kubectl apply -f -
-	kubectl create namespace camunda-platform
-	kubectl ns camunda-platform
-	kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
-	make secret.webmodeler.create -C $CAMUNDA_LOCAL
+  # create infra
+  log "Create infra"
+  kubectl kustomize --enable-helm $CAMUNDA_LOCAL/modules/ingress-nginx | kubectl apply -f -
+  kubectl create namespace camunda-platform
+  kubectl ns camunda-platform
+  kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
+  make secret.webmodeler.create -C $CAMUNDA_LOCAL
 
-	# install c8
-	log "Install C8"
-	helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n camunda-platform -f -
+  # install c8
+  log "Install C8"
+  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n camunda-platform -f -
 
-	# wait for c8
-	log "Wait for C8"
-	kubectl get pods
-	kubectl get ingress
+  # wait for c8
+  log "Wait for C8"
+  kubectl get pods
+  kubectl get ingress
 
-	watch kubectl get pods
-	;;
+  watch kubectl get pods
+  ;;
 apply)
-	log "Applying changes"
-	helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n camunda-platform -f -
-	watch kubectl get pods
-	;;
+  log "Applying changes"
+  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n camunda-platform -f -
+  watch kubectl get pods
+  ;;
 cleanup)
-	log "Cleaning up C8"
-	make clean -C $CAMUNDA_LOCAL
-	;;
+  log "Cleaning up C8"
+  make clean -C $CAMUNDA_LOCAL
+  ;;
 docs)
-	log "Opening C8 documentation"
-	http-server $CAMUNDA_DOCS -p 8080
-	;;
+  log "Opening C8 documentation"
+  http-server $CAMUNDA_DOCS -p 8080
+  ;;
 *)
-	log "Unknown command"
-	;;
+  log "Unknown command"
+  ;;
 esac

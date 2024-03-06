@@ -3,7 +3,7 @@
 # Notes
 
 ```bash
-# what running on port :80
+# what's running on port :80
 sudo lsof -i :80
 
 sudo service apache2 stop

@@ -65,4 +65,6 @@ k logs -f --tail=10 deployments/camunda-platform-console | jq -r '[.level, .time
 # break console by configuring a wrong keycloak url
 kubectl set env deployment/camunda-platform-console KEYCLOAK_INTERNAL_BASE_URL=http://wrong.url.local
 kubectl set env deployment/camunda-platform-console KEYCLOAK_INTERNAL_BASE_URL=http://camunda-platform-keycloak:80/auth
+
+# break user by removing console role
 ```

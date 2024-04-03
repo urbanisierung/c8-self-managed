@@ -10,7 +10,7 @@ global:
       optimize:
         redirectUrl: "https://local.distro.ultrawombat.com/optimize"
       console:
-        redirectUrl: "https://local.distro.ultrawombat.com"
+        redirectUrl: "https://local.distro.ultrawombat.com,http://localhost:4200"
   ingress:
     enabled: true
     className: ""

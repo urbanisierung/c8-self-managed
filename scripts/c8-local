@@ -52,6 +52,7 @@ install)
   kubectl kustomize --enable-helm $CAMUNDA_LOCAL/modules/ingress-nginx | kubectl apply -f -
   kubectl create namespace camunda-platform
   kubectl ns camunda-platform
+  # https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets
   kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
   # make secret.webmodeler.create -C $CAMUNDA_LOCAL
   kubectl create secret docker-registry registry-camunda-cloud \

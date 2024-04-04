@@ -7,6 +7,7 @@ CONSOLE=$2
 CAMUNDA_LOCAL=../helm
 #CLUSTER_NAME=camunda-platform-local
 CLUSTER_NAME=urbanisierung
+NAMESPACE_NAME=urbanisierung
 
 log() {
   printf "\n\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n🍿 >>> $1\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n"
@@ -48,31 +49,32 @@ install)
   log "Create cluster"
   # ==== CUSTOM YAML ====
   kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name $CLUSTER_NAME
-  kubectl ctx kind-$CLUSTER_NAME
+  # kubectl ctx kind-$CLUSTER_NAME
 
   # create infra
   log "Create infra"
   # ==== CUSTOM YAML ====
   kubectl kustomize --enable-helm $CAMUNDA_LOCAL/modules/ingress-nginx | kubectl apply -f -
-  kubectl create namespace camunda-platform
-  kubectl ns camunda-platform
+  kubectl create namespace $NAMESPACE_NAME
+  kubectl config set-context --current --namespace=$NAMESPACE_NAME
+  # kubectl ns camunda-platform
   # https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets
   # kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=C8/L=Theland/O=C8/CN=urbanisierung.local" -keyout /tmp/c8-key.key -out /tmp/c8-cert.pem
-  kubectl -n camunda-platform create secret tls camunda-platform \
+  kubectl -n $NAMESPACE_NAME create secret tls camunda-platform \
     --cert=/tmp/c8-cert.pem \
     --key=/tmp/c8-key.key
 
   # make secret.webmodeler.create -C $CAMUNDA_LOCAL
-  kubectl create secret docker-registry registry-camunda-cloud \
-    --namespace camunda-platform \
+  kubectl -n $NAMESPACE_NAME create secret docker-registry registry-camunda-cloud \
+    --namespace $NAMESPACE_NAME \
     --docker-server "registry.camunda.cloud" \
     --docker-username "$TEST_DOCKER_USERNAME_CAMUNDA_CLOUD" \
     --docker-password "$TEST_DOCKER_PASSWORD_CAMUNDA_CLOUD"
 
   # install c8
   log "Install C8"
-  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n camunda-platform -f -
+  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n $NAMESPACE_NAME -f -
 
   # wait for c8
   log "Wait for C8"
@@ -83,7 +85,7 @@ install)
   ;;
 apply)
   log "Applying changes"
-  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n camunda-platform -f -
+  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n $NAMESPACE_NAME -f -
   watch kubectl get pods
   ;;
 cleanup)

@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# setup
+
+COMMAND=$1
+CONSOLE=$2
+CAMUNDA_LOCAL=../helm
+#CLUSTER_NAME=camunda-platform-local
+CLUSTER_NAME=urbanisierung
+NAMESPACE_NAME=urbanisierung
+HOST_NAME=urbanisierung.local
+CONFIG_TO_REPLACE=../configs/c8-to-replace.yaml
+CONFIG_TARGET=../configs/c8.yaml
+
+log() {
+  printf "\n\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n🍿 >>> $1\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n"
+}
+
+case $CONSOLE in
+*snapshot*)
+  CONFIG=../configs/c8-with-console.yaml
+  ;;
+*stable*)
+  CONFIG=../configs/c8-with-console-stable.yaml
+  ;;
+*context*)
+  CONFIG=../configs/c8-with-console-context-path.yaml
+  ;;
+*telemetry*)
+  CONFIG=../configs/c8-with-console-and-telemetry.yaml
+  ;;
+*)
+  CONFIG=../configs/c8.yaml
+  ;;
+esac
+
+case $COMMAND in
+install)
+  # see https://employee-academy.camunda.com/c8-self-managed-using-c8-helm-chart
+  log "Installing C8"
+  # unreleased helm charts
+  log "Use unreleased helm charts"
+  # make camunda.unreleased -C $CAMUNDA_LOCAL
+  mkdir -p $CAMUNDA_LOCAL/repositories
+  git clone https://github.com/camunda/camunda-platform-helm.git $CAMUNDA_LOCAL/repositories/camunda-platform-helm
+  make -C $CAMUNDA_LOCAL/repositories/camunda-platform-helm helm.dependency-update
+  rm -rf $CAMUNDA_LOCAL/deployments/camunda-platform/charts/camunda-platform
+  mkdir -p $CAMUNDA_LOCAL/deployments/camunda-platform/charts
+  mv $CAMUNDA_LOCAL/repositories/camunda-platform-helm/charts/camunda-platform $CAMUNDA_LOCAL/deployments/camunda-platform/charts/camunda-platform
+
+  # create cluster
+  log "Create cluster"
+  # ==== CUSTOM YAML ====
+  kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name $CLUSTER_NAME
+  # kubectl ctx kind-$CLUSTER_NAME
+
+  # create infra
+  log "Create infra"
+  # ==== CUSTOM YAML ====
+  kubectl kustomize --enable-helm $CAMUNDA_LOCAL/modules/ingress-nginx | kubectl apply -f -
+  kubectl create namespace $NAMESPACE_NAME
+  kubectl config set-context --current --namespace=$NAMESPACE_NAME
+  # kubectl ns camunda-platform
+  # https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets
+  # kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
+  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=C8/L=Theland/O=C8/CN=$HOST_NAME" -keyout /tmp/c8-key.key -out /tmp/c8-cert.pem
+  kubectl -n $NAMESPACE_NAME create secret tls camunda-platform \
+    --cert=/tmp/c8-cert.pem \
+    --key=/tmp/c8-key.key
+
+  # make secret.webmodeler.create -C $CAMUNDA_LOCAL
+  kubectl -n $NAMESPACE_NAME create secret docker-registry registry-camunda-cloud \
+    --namespace $NAMESPACE_NAME \
+    --docker-server "registry.camunda.cloud" \
+    --docker-username "$TEST_DOCKER_USERNAME_CAMUNDA_CLOUD" \
+    --docker-password "$TEST_DOCKER_PASSWORD_CAMUNDA_CLOUD"
+
+  # install c8
+  log "Install C8"
+  # exchange host name
+  sed 's/${HOST}/'"$HOST_NAME"'/g' $CONFIG_TO_REPLACE >$CONFIG_TARGET
+  helm template camunda-platform camunda/camunda-platform --values $CONFIG_TARGET --skip-tests | kubectl apply -n $NAMESPACE_NAME -f -
+
+  # wait for c8
+  log "Wait for C8"
+  kubectl get pods
+  kubectl get ingress
+
+  watch kubectl get pods
+  ;;
+apply)
+  log "Applying changes"
+  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n $NAMESPACE_NAME -f -
+  watch kubectl get pods
+  ;;
+cleanup)
+  log "Cleaning up C8"
+  # make clean -C $CAMUNDA_LOCAL
+  rm -rf $CAMUNDA_LOCAL/modules/*/charts $CAMUNDA_LOCAL/deployments/*/charts
+  rm -rf $CAMUNDA_LOCAL/repositories/*
+  kind delete cluster --name $CLUSTER_NAME
+  ;;
+docs)
+  log "Opening C8 documentation"
+  http-server $CAMUNDA_DOCS -p 8080
+  ;;
+*)
+  log "Unknown command"
+  ;;
+esac

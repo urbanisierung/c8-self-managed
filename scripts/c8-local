@@ -5,6 +5,8 @@
 COMMAND=$1
 CONSOLE=$2
 CAMUNDA_LOCAL=../helm
+#CLUSTER_NAME=camunda-platform-local
+CLUSTER_NAME=urbanisierung
 
 log() {
   printf "\n\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n🍿 >>> $1\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n"
@@ -45,8 +47,8 @@ install)
   # create cluster
   log "Create cluster"
   # ==== CUSTOM YAML ====
-  kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name camunda-platform-local
-  kubectl ctx kind-camunda-platform-local
+  kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name $CLUSTER_NAME
+  kubectl ctx kind-$CLUSTER_NAME
 
   # create infra
   log "Create infra"
@@ -56,6 +58,7 @@ install)
   kubectl ns camunda-platform
   # https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets
   # kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
+  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=C8/L=Theland/O=C8/CN=urbanisierung.local" -keyout /tmp/c8-key.key -out /tmp/c8-cert.pem
   kubectl -n camunda-platform create secret tls camunda-platform \
     --cert=/tmp/c8-cert.pem \
     --key=/tmp/c8-key.key
@@ -88,7 +91,7 @@ cleanup)
   # make clean -C $CAMUNDA_LOCAL
   rm -rf $CAMUNDA_LOCAL/modules/*/charts $CAMUNDA_LOCAL/deployments/*/charts
   rm -rf $CAMUNDA_LOCAL/repositories/*
-  kind delete cluster --name camunda-platform-local
+  kind delete cluster --name $CLUSTER_NAME
   ;;
 docs)
   log "Opening C8 documentation"

@@ -11,6 +11,8 @@ global:
         redirectUrl: "https://${HOST}/optimize"
       console:
         redirectUrl: "https://${HOST},http://localhost:4200"
+      webModeler:
+        redirectUrl: "https://${HOST}/modeler"
   ingress:
     enabled: true
     className: ""
@@ -77,3 +79,22 @@ zeebe-gateway:
     tls:
       enabled: true
       secretName: camunda-platform
+
+webModeler:
+  contextPath: "/modeler"
+  enabled: true
+  image:
+    tag: latest
+    pullSecrets:
+      - name: registry-camunda-cloud
+  restapi:
+    mail:
+      smtpHost: smtp.example.com
+      smtpPort: 587
+      smtpUser: user
+      smtpPassword: secret
+      # email address to be displayed as sender of emails from Web Modeler
+      fromAddress: no-reply@example.com
+
+postgresql:
+  enabled: true

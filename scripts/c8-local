@@ -8,6 +8,9 @@ CAMUNDA_LOCAL=../helm
 #CLUSTER_NAME=camunda-platform-local
 CLUSTER_NAME=urbanisierung
 NAMESPACE_NAME=urbanisierung
+HOST_NAME=urbanisierung.local
+CONFIG_TO_REPLACE=../configs/c8-to-replace.yaml
+CONFIG_TARGET=../configs/c8.yaml
 
 log() {
   printf "\n\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n🍿 >>> $1\n🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿🍿\n"
@@ -60,7 +63,7 @@ install)
   # kubectl ns camunda-platform
   # https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets
   # kubectl apply -n camunda-platform -f $CAMUNDA_LOCAL/modules/camunda-platform/secret.yaml
-  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=C8/L=Theland/O=C8/CN=urbanisierung.local" -keyout /tmp/c8-key.key -out /tmp/c8-cert.pem
+  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=C8/L=Theland/O=C8/CN=$HOST_NAME" -keyout /tmp/c8-key.key -out /tmp/c8-cert.pem
   kubectl -n $NAMESPACE_NAME create secret tls camunda-platform \
     --cert=/tmp/c8-cert.pem \
     --key=/tmp/c8-key.key
@@ -74,7 +77,9 @@ install)
 
   # install c8
   log "Install C8"
-  helm template camunda-platform camunda/camunda-platform --values $CONFIG --skip-tests | kubectl apply -n $NAMESPACE_NAME -f -
+  # exchange host name
+  sed 's/${HOST}/'"$HOST_NAME"'/g' $CONFIG_TO_REPLACE >$CONFIG_TARGET
+  helm template camunda-platform camunda/camunda-platform --values $CONFIG_TARGET --skip-tests | kubectl apply -n $NAMESPACE_NAME -f -
 
   # wait for c8
   log "Wait for C8"

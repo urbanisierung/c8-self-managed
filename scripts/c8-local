@@ -44,11 +44,13 @@ install)
 
   # create cluster
   log "Create cluster"
+  # ==== CUSTOM YAML ====
   kind create cluster --config $CAMUNDA_LOCAL/clusters/kind/kind-cluster-config.yaml --name camunda-platform-local
   kubectl ctx kind-camunda-platform-local
 
   # create infra
   log "Create infra"
+  # ==== CUSTOM YAML ====
   kubectl kustomize --enable-helm $CAMUNDA_LOCAL/modules/ingress-nginx | kubectl apply -f -
   kubectl create namespace camunda-platform
   kubectl ns camunda-platform

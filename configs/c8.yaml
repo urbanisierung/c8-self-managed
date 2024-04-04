@@ -1,0 +1,79 @@
+global:
+  identity:
+    auth:
+      enabled: true
+      publicIssuerUrl: "https://urbanisierung.local/auth/realms/camunda-platform"
+      operate:
+        redirectUrl: "https://urbanisierung.local/operate"
+      tasklist:
+        redirectUrl: "https://urbanisierung.local/tasklist"
+      optimize:
+        redirectUrl: "https://urbanisierung.local/optimize"
+      console:
+        redirectUrl: "https://urbanisierung.local,http://localhost:4200"
+  ingress:
+    enabled: true
+    className: ""
+    host: "urbanisierung.local"
+    tls:
+      enabled: true
+      secretName: camunda-platform
+
+# console
+console:
+  enabled: true
+  contextPath: "/"
+  image:
+    tag: SNAPSHOT
+    pullSecrets:
+      - name: registry-camunda-cloud
+
+connectors:
+  enabled: true
+  inbound:
+    mode: disabled
+
+# Configure elastic search to make it running for local development
+elasticsearch:
+  # Request a single node with a persistent volume
+  master:
+    replicaCount: 1
+    persistence:
+      size: 15Gi
+
+identity:
+  enabled: true
+  contextPath: "/identity"
+  fullURL: "https://urbanisierung.local/identity"
+  image:
+    tag: SNAPSHOT
+
+operate:
+  enabled: true
+  contextPath: "/operate"
+
+optimize:
+  enabled: true
+  contextPath: "/optimize"
+
+tasklist:
+  enabled: true
+  contextPath: "/tasklist"
+
+# Reduce for Zeebe and Gateway the configured replicas and with that the required resources
+# to get it running locally
+zeebe:
+  clusterSize: 1
+  partitionCount: 1
+  replicationFactor: 1
+  pvcSize: 10Gi
+
+zeebe-gateway:
+  replicas: 1
+  ingress:
+    enabled: true
+    className: ""
+    host: "zeebe.urbanisierung.local"
+    tls:
+      enabled: true
+      secretName: camunda-platform

@@ -35,12 +35,12 @@ install)
   # unreleased helm charts
   log "Use unreleased helm charts"
   # make camunda.unreleased -C $CAMUNDA_LOCAL
-  mkdir -p ./repositories
-  git clone https://github.com/camunda/camunda-platform-helm.git ./repositories/camunda-platform-helm
-  make -C ./repositories/camunda-platform-helm helm.dependency-update
-  rm -rf ./deployments/camunda-platform/charts/camunda-platform
-  mkdir -p ./deployments/camunda-platform/charts
-  mv ./repositories/camunda-platform-helm/charts/camunda-platform ./deployments/camunda-platform/charts/camunda-platform
+  mkdir -p $CAMUNDA_LOCAL/repositories
+  git clone https://github.com/camunda/camunda-platform-helm.git $CAMUNDA_LOCAL/repositories/camunda-platform-helm
+  make -C $CAMUNDA_LOCAL/repositories/camunda-platform-helm helm.dependency-update
+  rm -rf $CAMUNDA_LOCAL/deployments/camunda-platform/charts/camunda-platform
+  mkdir -p $CAMUNDA_LOCAL/deployments/camunda-platform/charts
+  mv $CAMUNDA_LOCAL/repositories/camunda-platform-helm/charts/camunda-platform $CAMUNDA_LOCAL/deployments/camunda-platform/charts/camunda-platform
 
   # create cluster
   log "Create cluster"
@@ -78,7 +78,10 @@ apply)
   ;;
 cleanup)
   log "Cleaning up C8"
-  make clean -C $CAMUNDA_LOCAL
+  # make clean -C $CAMUNDA_LOCAL
+  rm -rf $CAMUNDA_LOCAL/modules/*/charts $CAMUNDA_LOCAL/deployments/*/charts
+  rm -rf $CAMUNDA_LOCAL/repositories/*
+  kind delete cluster --name camunda-platform-local
   ;;
 docs)
   log "Opening C8 documentation"

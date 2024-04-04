@@ -57,8 +57,8 @@ install)
   kubectl create secret docker-registry registry-camunda-cloud \
     --namespace camunda-platform \
     --docker-server "registry.camunda.cloud" \
-    --docker-username "$${TEST_DOCKER_USERNAME_CAMUNDA_CLOUD}" \
-    --docker-password "$${TEST_DOCKER_PASSWORD_CAMUNDA_CLOUD}"
+    --docker-username "$TEST_DOCKER_USERNAME_CAMUNDA_CLOUD" \
+    --docker-password "$TEST_DOCKER_PASSWORD_CAMUNDA_CLOUD"
 
   # install c8
   log "Install C8"
